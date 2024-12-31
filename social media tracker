@@ -1,0 +1,157 @@
+#include <iostream>
+using namespace std;
+
+// Structure to represent a Post
+struct Post {
+    char title[100];  // Array to store the post title
+    int likes;
+    int comments;
+    int shares;
+};
+
+// Function to add a new post
+void addPost(Post posts[], int& postCount) {
+    if (postCount >= 100) {
+        cout << "Cannot add more posts. Limit reached.\n";
+        return;
+    }
+
+    cout << "Enter post title: ";
+    cin.ignore();  // To ignore the newline character after previous input
+    cin.getline(posts[postCount].title, 100);  // Read the post title
+
+    cout << "Enter number of likes: ";
+    cin >> posts[postCount].likes;
+
+    cout << "Enter number of comments: ";
+    cin >> posts[postCount].comments;
+
+    cout << "Enter number of shares: ";
+    cin >> posts[postCount].shares;
+
+    postCount++;  // Increment the number of posts
+}
+
+// Function to display total analytics (likes, comments, shares)
+void displayAnalytics(const Post posts[], int postCount) {
+    int totalLikes = 0, totalComments = 0, totalShares = 0;
+
+    // Calculate total likes, comments, and shares
+    for (int i = 0; i < postCount; ++i) {
+        totalLikes += posts[i].likes;
+        totalComments += posts[i].comments;
+        totalShares += posts[i].shares;
+    }
+
+    // Display the analytics summary
+    cout << "\nSocial Media Analytics Summary:\n";
+    cout << "Total Likes: " << totalLikes << endl;
+    cout << "Total Comments: " << totalComments << endl;
+    cout << "Total Shares: " << totalShares << endl;
+}
+
+// Function to display details of all posts
+void displayPosts(const Post posts[], int postCount) {
+    if (postCount == 0) {
+        cout << "No posts available.\n";  // If no posts exist
+        return;
+    }
+
+    // Display each post's details
+    cout << "\nList of Posts:\n";
+    for (int i = 0; i < postCount; ++i) {
+        cout << "Post #" << i + 1<< endl;
+		cout << " Title: " << posts[i].title << endl;
+        cout << "Likes: " << posts[i].likes << endl;
+		cout << ", Comments: " << posts[i].comments << endl;
+		cout << ", Shares: " << posts[i].shares << endl;
+    }
+}
+
+// Function to calculate the engagement score for each post and return the top post
+Post getTopPerformingPost(const Post posts[], int postCount) {
+    int topIndex = 0;
+    int maxScore = posts[0].likes + posts[0].comments + posts[0].shares;  // Initial score for first post
+
+    // Loop through all posts and calculate the engagement score
+    for (int i = 1; i < postCount; ++i) {
+        int score = posts[i].likes + posts[i].comments + posts[i].shares;
+        if (score > maxScore) {
+            maxScore = score;
+            topIndex = i;
+        }
+    }
+
+    return posts[topIndex];  // Return the top-performing post
+}
+
+// Function to suggest a posting time based on engagement
+void suggestPostingTime(const Post posts[], int postCount) {
+    int totalEngagement = 0;
+
+    // Calculate total engagement across all posts
+    for (int i = 0; i < postCount; ++i) {
+        totalEngagement += posts[i].likes + posts[i].comments + posts[i].shares;
+    }
+
+    // Suggest posting time based on total engagement
+    cout << "\nSuggested Posting Time: ";
+    if (totalEngagement > 1000) {  // High engagement suggests a popular time
+        cout << "Peak hours (6 PM)\n";
+    } else {
+        cout << "Off-peak hours (10 AM)\n";
+    }
+}
+
+int main() {
+    Post posts[100];  // Array to store up to 100 posts
+    int postCount = 0;  // Number of posts currently stored
+    int choice;
+
+    // Main loop
+    do {
+        // Display the main menu
+        cout << "\nSocial Media Analytics Tracker\n";
+        cout << "1. Add a new post\n";
+        cout << "2. Display all posts\n";
+        cout << "3. Display analytics\n";
+        cout << "4. Display top-performing post\n";
+        cout << "5. Suggest posting time\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;  // Get user's choice
+
+        // Switch to execute different actions based on user's choice
+        switch (choice) {
+            case 1:
+                addPost(posts, postCount);  // Call the function to add a new post
+                break;
+            case 2:
+                displayPosts(posts, postCount);  // Call the function to display all posts
+                break;
+            case 3:
+                displayAnalytics(posts, postCount);  // Call the function to display analytics
+                break;
+            case 4:
+                {
+                    Post topPost = getTopPerformingPost(posts, postCount);  // Get the top-performing post
+                    cout << "\nTop Performing Post:\n";
+                    cout << "Title: " << topPost.title << endl;
+                    cout << "Likes: " << topPost.likes<< endl;
+					cout << ", Comments: " << topPost.comments << endl;
+					cout << ", Shares: " << topPost.shares << endl;
+                }
+                break;
+            case 5:
+                suggestPostingTime(posts, postCount);  // Suggest the best posting time based on engagement
+                break;
+            case 6:
+                cout << "Exiting the program. Goodbye!\n";  // Exit message
+                break;
+            default:
+                cout << "Invalid choice. Please try again.\n";  // Invalid choice handler
+        }
+    } while (choice != 6);  // Keep looping until user chooses to exit
+
+    return 0;  // Return from main
+}
